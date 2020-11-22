@@ -1,18 +1,24 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
-const Nav = () => {
+const Nav = ( { user, setUser} ) => {
+    const history = useHistory();
+    const logout = () => {
+        localStorage.clear();
+        setUser(null);
+        history.push("/");
+    }
     return (
         <div className="Nav">
             <div className="Nav-home">
                 <Link to="/">Home</Link>
             </div>
-            {localStorage._token ? 
+            {user ? 
                 <div className="Nav-links">
                     <Link to="/companies">Companies</Link>
                     <Link to="/jobs">Jobs</Link>
                     <Link to="/profile">Profile</Link>
-                    <Link to="/logout">Logout</Link>
+                    <Link onClick={logout} to="/">Logout @{user.username}</Link>
                 </div>
             :
                 <div className="Nav-links">

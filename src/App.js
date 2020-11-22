@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect } from 'react';
 import Nav from './Nav';
 import Home from './Home';
 import Login from './Login';
@@ -6,6 +6,7 @@ import Jobs from './Jobs';
 import Companies from './Companies';
 import Company from './Company';
 import Profile from './Profile';
+import JoblyAPI from './JoblyAPI';
 
 import { BrowserRouter, Switch, Route } from 'react-router-dom'
 import './App.css';
@@ -13,16 +14,32 @@ import './App.css';
 
 
 function App() {
+
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const checkIfLoggedIn = async () => {
+      console.log("Checking if logged in...")
+      if(localStorage._token && localStorage.username) {
+        let foundUser = await JoblyAPI.getUser(localStorage.username);
+        setUser(foundUser);
+        console.log(foundUser);
+      }
+    }
+    checkIfLoggedIn();
+
+  }, [])
+
   return (
     <div className="App">
       <BrowserRouter >
-        <Nav />
+        <Nav  user={user} setUser={setUser}/>
         <Switch>
           <Route exact path="/">
-              <Home />
+              <Home user={user}/>
           </Route>
           <Route exact path="/login">
-              <Login />
+              <Login user={user} setUser={setUser}/>
           </Route>
           <Route exact path="/jobs">
               <Jobs />
@@ -34,7 +51,7 @@ function App() {
               <Company />
           </Route>
           <Route exact path="/profile">
-              <Profile />
+              <Profile user={user}/>
           </Route>
           <Route>
               <h1>Oh no 404</h1>
